@@ -17,6 +17,7 @@ namespace PetShop.Models
     {
         [Display(Name = "Cliente")]
         Customer,
+        [Display(Name = "Empregado")]
         Employee
     }
 }
