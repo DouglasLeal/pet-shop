@@ -10,40 +10,40 @@ using PetShop.Models;
 
 namespace PetShop.Controllers
 {
-    [Route("animais")]
-    public class AnimalsController : Controller
+    [Route("pessoas")]
+    public class PersonsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public AnimalsController(ApplicationDbContext context)
+        public PersonsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        [HttpGet("")]      
+        [HttpGet("")]
         public async Task<IActionResult> Index()
         {
-              return _context.Animals != null ? 
-                          View(await _context.Animals.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Animals'  is null.");
+              return _context.Persons != null ? 
+                          View(await _context.Persons.ToListAsync()) :
+                          Problem("Entity set 'ApplicationDbContext.Persons'  is null.");
         }
 
         [HttpGet("detalhes")]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Animals == null)
+            if (id == null || _context.Persons == null)
             {
                 return NotFound();
             }
 
-            var animal = await _context.Animals
+            var person = await _context.Persons
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (animal == null)
+            if (person == null)
             {
                 return NotFound();
             }
 
-            return View(animal);
+            return View(person);
         }
 
         [HttpGet("novo")]
@@ -52,46 +52,46 @@ namespace PetShop.Controllers
             return View();
         }
 
-        // POST: Animals/Create
+        // POST: Persons/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Color,Observation,Type")] Animal animal)
+        public async Task<IActionResult> Create([Bind("Id,Name,Type")] Person person)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(animal);
+                _context.Add(person);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(animal);
+            return View(person);
         }
 
         [HttpGet("editar")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Animals == null)
+            if (id == null || _context.Persons == null)
             {
                 return NotFound();
             }
 
-            var animal = await _context.Animals.FindAsync(id);
-            if (animal == null)
+            var person = await _context.Persons.FindAsync(id);
+            if (person == null)
             {
                 return NotFound();
             }
-            return View(animal);
+            return View(person);
         }
 
-        // POST: Animals/Edit/5
+        // POST: Persons/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Color,Observation,Type")] Animal animal)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type")] Person person)
         {
-            if (id != animal.Id)
+            if (id != person.Id)
             {
                 return NotFound();
             }
@@ -100,12 +100,12 @@ namespace PetShop.Controllers
             {
                 try
                 {
-                    _context.Update(animal);
+                    _context.Update(person);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AnimalExists(animal.Id))
+                    if (!PersonExists(person.Id))
                     {
                         return NotFound();
                     }
@@ -116,49 +116,49 @@ namespace PetShop.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(animal);
+            return View(person);
         }
 
         [HttpGet("excluir")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Animals == null)
+            if (id == null || _context.Persons == null)
             {
                 return NotFound();
             }
 
-            var animal = await _context.Animals
+            var person = await _context.Persons
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (animal == null)
+            if (person == null)
             {
                 return NotFound();
             }
 
-            return View(animal);
+            return View(person);
         }
 
-        // POST: Animals/Delete/5
+        // POST: Persons/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Animals == null)
+            if (_context.Persons == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.Animals'  is null.");
+                return Problem("Entity set 'ApplicationDbContext.Persons'  is null.");
             }
-            var animal = await _context.Animals.FindAsync(id);
-            if (animal != null)
+            var person = await _context.Persons.FindAsync(id);
+            if (person != null)
             {
-                _context.Animals.Remove(animal);
+                _context.Persons.Remove(person);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AnimalExists(int id)
+        private bool PersonExists(int id)
         {
-          return (_context.Animals?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Persons?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
