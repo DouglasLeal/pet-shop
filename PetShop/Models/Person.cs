@@ -1,4 +1,5 @@
 ﻿
+using PetShop.Enum;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -18,13 +19,5 @@ namespace PetShop.Models
         [MaxLength(100, ErrorMessage = "{0} possui o limite de {1} caracteres")]
         [DisplayName("Tipo")]
         public PersonType Type { get; set; }
-    }
-
-    public enum PersonType
-    {
-        [Display(Name = "Cliente")]
-        Customer,
-        [Display(Name = "Empregado")]
-        Employee
     }
 }

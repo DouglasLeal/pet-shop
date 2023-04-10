@@ -10,6 +10,7 @@ using PetShop.Models;
 
 namespace PetShop.Controllers
 {
+    [Route("produtos")]
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,7 +20,7 @@ namespace PetShop.Controllers
             _context = context;
         }
 
-        // GET: Products
+        [HttpGet("")]
         public async Task<IActionResult> Index()
         {
               return _context.Product != null ? 
@@ -27,7 +28,7 @@ namespace PetShop.Controllers
                           Problem("Entity set 'ApplicationDbContext.Product'  is null.");
         }
 
-        // GET: Products/Details/5
+        [HttpGet("detalhes")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Product == null)
@@ -45,7 +46,7 @@ namespace PetShop.Controllers
             return View(product);
         }
 
-        // GET: Products/Create
+        [HttpGet("novo")]
         public IActionResult Create()
         {
             return View();
@@ -67,7 +68,7 @@ namespace PetShop.Controllers
             return View(product);
         }
 
-        // GET: Products/Edit/5
+        [HttpGet("editar")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Product == null)
@@ -118,7 +119,7 @@ namespace PetShop.Controllers
             return View(product);
         }
 
-        // GET: Products/Delete/5
+        [HttpGet("excluir")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Product == null)

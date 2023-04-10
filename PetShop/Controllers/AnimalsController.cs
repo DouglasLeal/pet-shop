@@ -52,10 +52,7 @@ namespace PetShop.Controllers
             return View();
         }
 
-        // POST: Animals/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("novo")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Color,Observation,Type")] Animal animal)
         {
