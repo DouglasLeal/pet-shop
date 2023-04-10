@@ -15,12 +15,12 @@ namespace PetShop.Models
 
         [Required(ErrorMessage = "{0} é obrigatório")]
         [DisplayName("Preço de custo")]
-        [Range(0, 1000)]
+        [Range(0, 1000, ErrorMessage = "O valor deve ser no mínimo {1} e no máximo {2}")]
         public decimal CostPrice { get; set; }
 
         [Required(ErrorMessage = "{0} é obrigatório")]
         [DisplayName("Preço de venda")]
-        [Range(0, 1000)]
+        [Range(0, 1000, ErrorMessage = "O valor deve ser no mínimo {1} e no máximo {2}")]
         public decimal SalePrice { get; set; }
 
         [DisplayName("Descrição")]
