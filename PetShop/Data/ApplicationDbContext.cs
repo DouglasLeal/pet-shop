@@ -8,10 +8,13 @@ namespace PetShop.Data
     {
         public DbSet<Animal> Animals { get; set; }
         public DbSet<Person> Persons { get; set; }
+        public DbSet<Person> Products { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
+
+        public DbSet<PetShop.Models.Product> Product { get; set; } = default!;
     }
 }

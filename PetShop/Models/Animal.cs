@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using PetShop.Enum;
 
 namespace PetShop.Models
 {
@@ -25,13 +26,5 @@ namespace PetShop.Models
         [Required(ErrorMessage = "{0} é obrigatório")]
         [DisplayName("Tipo")]
         public AnimalType Type { get; set; }
-    }
-
-    public enum AnimalType
-    {
-        [Display(Name = "Gato")]
-        Cat,
-        [Display(Name = "Cachorro")]
-        Dog
     }
 }
