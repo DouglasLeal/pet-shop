@@ -22,16 +22,22 @@
                 <input asp-for="Color" class="form-control" />
                 <span asp-validation-for="Color" class="text-danger"></span>
             </div>
-            <div class="form-group mb-3">
-                <label asp-for="Observation" class="control-label fw-bold"></label>
-                <textarea asp-for="Observation" class="form-control"></textarea>
-                <span asp-validation-for="Observation" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="Type" class="control-label fw-bold"></label>
                 <select asp-for="Type" class="form-control" asp-items="Html.GetEnumSelectList<AnimalType>()"></select>
                 <span asp-validation-for="Type" class="text-danger"></span>
             </div>
+            <div class="form-group mb-3">
+                <label asp-for="Photo" class="control-label fw-bold"></label>
+                <input asp-for="Photo" class="form-control" />
+                <span asp-validation-for="Photo" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Observation" class="control-label fw-bold"></label>
+                <textarea asp-for="Observation" class="form-control"></textarea>
+                <span asp-validation-for="Observation" class="text-danger"></span>
+            </div>
+            
             <div class="form-group">
                 <input type="submit" value="Criar" class="btn btn-primary w-100 my-3" />
             </div>

@@ -26,5 +26,8 @@ namespace PetShop.Models
         [Required(ErrorMessage = "{0} é obrigatório")]
         [DisplayName("Tipo")]
         public AnimalType Type { get; set; }
+
+        [DisplayName("Foto")]
+        public string? Photo { get; set; }
     }
 }
