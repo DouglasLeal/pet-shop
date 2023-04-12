@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PetShop.Data;
 using PetShop.Models;
+using PetShop.ViewModels;
 
 namespace PetShop.Controllers
 {
@@ -14,10 +16,12 @@ namespace PetShop.Controllers
     public class AnimalsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public AnimalsController(ApplicationDbContext context)
+        public AnimalsController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet("")]      
@@ -54,15 +58,29 @@ namespace PetShop.Controllers
 
         [HttpPost("novo")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Color,Observation,Type,Photo")] Animal animal)
+        public async Task<IActionResult> Create([Bind("Id,Name,Color,Observation,Type,PhotoFile")] AnimalViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
+                var animal = _mapper.Map<Animal>(viewModel);
+
+                if (viewModel.PhotoFile != null)
+                {
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/imagens/", viewModel.PhotoFile.FileName);
+
+                    if (!await UploadFile(viewModel.PhotoFile, path))
+                    {
+                        return View(viewModel);
+                    }
+
+                    animal.Photo = viewModel.PhotoFile.FileName;
+                }                
+
                 _context.Add(animal);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(animal);
+            return View(viewModel);
         }
 
         [HttpGet("editar")]
