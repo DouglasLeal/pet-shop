@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PetShop.Data;
 using PetShop.Models;
+using PetShop.ViewModels;
 
 namespace PetShop.Controllers
 {
@@ -14,10 +16,12 @@ namespace PetShop.Controllers
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ProductsController(ApplicationDbContext context)
+        public ProductsController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet("")]
@@ -54,15 +58,30 @@ namespace PetShop.Controllers
 
         [HttpPost("novo")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,CostPrice,SalePrice,Description,Type")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,CostPrice,SalePrice,Description,Type,PhotoFile")] ProductViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
+                var product = _mapper.Map<Product>(viewModel);
+
+                if (viewModel.PhotoFile != null)
+                {
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/imagens/", viewModel.PhotoFile.FileName);
+
+                    if (!await UploadFile(viewModel.PhotoFile, path))
+                    {
+                        return View(viewModel);
+                    }
+
+                    product.Photo = viewModel.PhotoFile.FileName;
+                }
+
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(product);
+
+            return View(viewModel);
         }
 
         [HttpGet("editar")]
@@ -152,6 +171,20 @@ namespace PetShop.Controllers
         private bool ProductExists(int id)
         {
           return (_context.Product?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private async Task<bool> UploadFile(IFormFile file, string path)
+        {
+            if (System.IO.File.Exists(path))
+            {
+                ModelState.AddModelError(string.Empty, "Já existe um arquivo com este nome.");
+                return false;
+            }
+
+            using var fileStream = new FileStream(path, FileMode.Create);
+            await file.CopyToAsync(fileStream);
+
+            return true;
         }
     }
 }
