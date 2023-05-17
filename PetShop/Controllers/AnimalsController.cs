@@ -160,6 +160,7 @@ namespace PetShop.Controllers
             var animal = await _context.Animals.FindAsync(id);
             if (animal != null)
             {
+                System.IO.File.Delete($"wwwroot/imagens/{animal.Photo}");
                 _context.Animals.Remove(animal);
             }
             
