@@ -161,6 +161,7 @@ namespace PetShop.Controllers
             var product = await _context.Product.FindAsync(id);
             if (product != null)
             {
+                System.IO.File.Delete($"wwwroot/imagens/{product.Photo}");
                 _context.Product.Remove(product);
             }
             
