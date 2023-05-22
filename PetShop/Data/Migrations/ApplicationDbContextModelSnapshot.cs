@@ -277,7 +277,7 @@ namespace PetShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Person");
+                    b.ToTable("Persons");
                 });
 
             modelBuilder.Entity("PetShop.Models.Product", b =>

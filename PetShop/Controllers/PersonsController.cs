@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PetShop.Data;
 using PetShop.Models;
+using PetShop.ViewModels;
 
 namespace PetShop.Controllers
 {
@@ -14,10 +16,12 @@ namespace PetShop.Controllers
     public class PersonsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public PersonsController(ApplicationDbContext context)
+        public PersonsController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet("")]
@@ -58,11 +62,25 @@ namespace PetShop.Controllers
         {
             if (ModelState.IsValid)
             {
+                var person = _mapper.Map<Person>(viewModel);
+
+                if (viewModel.PhotoFile != null)
+                {
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/imagens/", viewModel.PhotoFile.FileName);
+
+                    if (!await UploadFile(viewModel.PhotoFile, path))
+                    {
+                        return View(viewModel);
+                    }
+
+                    person.Photo = viewModel.PhotoFile.FileName;
+                }
+
                 _context.Add(person);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(person);
+            return View(viewModel);
         }
 
         [HttpGet("editar")]

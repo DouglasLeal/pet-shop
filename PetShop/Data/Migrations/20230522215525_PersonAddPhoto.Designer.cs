@@ -12,7 +12,7 @@ using PetShop.Data;
 namespace PetShop.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230522212943_PersonAddPhoto")]
+    [Migration("20230522215525_PersonAddPhoto")]
     partial class PersonAddPhoto
     {
         /// <inheritdoc />
@@ -280,7 +280,7 @@ namespace PetShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Person");
+                    b.ToTable("Persons");
                 });
 
             modelBuilder.Entity("PetShop.Models.Product", b =>
