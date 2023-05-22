@@ -1,11 +1,10 @@
-﻿
-using PetShop.Enum;
-using System.ComponentModel;
+﻿using PetShop.Enum;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
-namespace PetShop.Models
+namespace PetShop.ViewModels
 {
-    public class Person
+    public class PersonViewModel
     {
         [Key]
         public int Id { get; set; }
@@ -22,5 +21,8 @@ namespace PetShop.Models
 
         [DisplayName("Foto")]
         public string? Photo { get; set; }
+
+        [DisplayName("Foto")]
+        public IFormFile? PhotoFile { get; set; }
     }
 }
