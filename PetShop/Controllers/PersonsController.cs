@@ -54,7 +54,7 @@ namespace PetShop.Controllers
 
         [HttpPost("novo")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Type")] Person person)
+        public async Task<IActionResult> Create([Bind("Id,Name,Type,PhotoFile")] PersonViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
@@ -83,7 +83,7 @@ namespace PetShop.Controllers
 
         [HttpPost("editar")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type")] Person person)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type")] PersonViewModel person)
         {
             if (id != person.Id)
             {
@@ -152,6 +152,20 @@ namespace PetShop.Controllers
         private bool PersonExists(int id)
         {
           return (_context.Persons?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private async Task<bool> UploadFile(IFormFile file, string path)
+        {
+            if (System.IO.File.Exists(path))
+            {
+                ModelState.AddModelError(string.Empty, "Já existe um arquivo com este nome.");
+                return false;
+            }
+
+            using var fileStream = new FileStream(path, FileMode.Create);
+            await file.CopyToAsync(fileStream);
+
+            return true;
         }
     }
 }
