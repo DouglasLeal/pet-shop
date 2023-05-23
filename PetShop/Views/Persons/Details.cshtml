@@ -21,6 +21,12 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Type)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Photo)
+        </dt>
+        <dd class="col-sm-10">
+            <img src="~/imagens/@Model.Photo" width="300px" />
+        </dd>
     </dl>
 </div>
 <div>
