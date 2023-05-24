@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PetShop.Data;
 using PetShop.Models;
+using PetShop.Utils;
 using PetShop.ViewModels;
 
 namespace PetShop.Controllers
@@ -68,7 +69,7 @@ namespace PetShop.Controllers
                 {
                     var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/imagens/", viewModel.PhotoFile.FileName);
 
-                    if (!await UploadFile(viewModel.PhotoFile, path))
+                    if (!await ImageUtil.Upload(viewModel.PhotoFile, path))
                     {
                         return View(viewModel);
                     }
@@ -170,20 +171,6 @@ namespace PetShop.Controllers
         private bool PersonExists(int id)
         {
           return (_context.Persons?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
-        private async Task<bool> UploadFile(IFormFile file, string path)
-        {
-            if (System.IO.File.Exists(path))
-            {
-                ModelState.AddModelError(string.Empty, "Já existe um arquivo com este nome.");
-                return false;
-            }
-
-            using var fileStream = new FileStream(path, FileMode.Create);
-            await file.CopyToAsync(fileStream);
-
-            return true;
         }
     }
 }
