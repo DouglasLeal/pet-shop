@@ -161,6 +161,7 @@ namespace PetShop.Controllers
             var person = await _context.Persons.FindAsync(id);
             if (person != null)
             {
+                await ImageUtil.Delete($"wwwroot/imagens/{person.Photo}");
                 _context.Persons.Remove(person);
             }
             

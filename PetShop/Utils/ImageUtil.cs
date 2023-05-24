@@ -1,4 +1,6 @@
-﻿namespace PetShop.Utils
+﻿using PetShop.Models;
+
+namespace PetShop.Utils
 {
     public class ImageUtil
     {
@@ -6,6 +8,13 @@
         {
             using var fileStream = new FileStream(path, FileMode.Create);
             await file.CopyToAsync(fileStream);
+
+            return true;
+        }
+
+        public static async Task<bool> Delete(string path)
+        {
+            System.IO.File.Delete(path);
 
             return true;
         }
