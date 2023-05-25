@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PetShop.Data;
+using PetShop.Interfaces;
 using PetShop.Models;
 using PetShop.Utils;
 using PetShop.ViewModels;
@@ -16,33 +17,25 @@ namespace PetShop.Controllers
     [Route("produtos")]
     public class ProductsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IProductRepository _repository;
         private readonly IMapper _mapper;
 
-        public ProductsController(ApplicationDbContext context, IMapper mapper)
+        public ProductsController(IMapper mapper, IProductRepository repository)
         {
-            _context = context;
             _mapper = mapper;
+            _repository = repository;
         }
 
         [HttpGet("")]
         public async Task<IActionResult> Index()
         {
-              return _context.Product != null ? 
-                          View(await _context.Product.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Product'  is null.");
+            return View(await _repository.List());
         }
 
         [HttpGet("detalhes")]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.Product == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Product
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _repository.GetById(id);
             if (product == null)
             {
                 return NotFound();
@@ -77,8 +70,7 @@ namespace PetShop.Controllers
                     product.Photo = viewModel.PhotoFile.FileName;
                 }
 
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                await _repository.Create(product);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -86,14 +78,9 @@ namespace PetShop.Controllers
         }
 
         [HttpGet("editar")]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || _context.Product == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Product.FindAsync(id);
+            var product = await _repository.GetById(id);
             if (product == null)
             {
                 return NotFound();
@@ -112,37 +99,16 @@ namespace PetShop.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _repository.Update(product);
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
         }
 
         [HttpGet("excluir")]
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null || _context.Product == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Product
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _repository.GetById(id);
             if (product == null)
             {
                 return NotFound();
@@ -155,24 +121,14 @@ namespace PetShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Product == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Product'  is null.");
-            }
-            var product = await _context.Product.FindAsync(id);
+            var product = await _repository.GetById(id);
             if (product != null)
             {
                 await ImageUtil.Delete($"wwwroot/imagens/{product.Photo}");
-                _context.Product.Remove(product);
+                await _repository.Delete(product);
             }
             
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ProductExists(int id)
-        {
-          return (_context.Product?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

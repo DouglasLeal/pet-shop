@@ -8,6 +8,6 @@ namespace PetShop.Interfaces
         Task<IList<Product>> List();
         Task<Product?> GetById(int id);
         Task Update(Product product);
-        Task Delete(int id);
+        Task Delete(Product product);
     }
 }

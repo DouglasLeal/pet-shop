@@ -31,9 +31,9 @@ namespace PetShop.Repositories
             return await _context.Product.FirstOrDefaultAsync(p => id == p.Id);
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(Product product)
         {
-            _context.Remove(id);
+            _context.Remove(product);
             await _context.SaveChangesAsync();
             return;
         }
