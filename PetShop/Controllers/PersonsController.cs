@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PetShop.Data;
+using PetShop.Interfaces;
 using PetShop.Models;
 using PetShop.Utils;
 using PetShop.ViewModels;
@@ -16,33 +17,25 @@ namespace PetShop.Controllers
     [Route("pessoas")]
     public class PersonsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IPersonRepository _repository;
         private readonly IMapper _mapper;
 
-        public PersonsController(ApplicationDbContext context, IMapper mapper)
+        public PersonsController(IPersonRepository repository, IMapper mapper)
         {
-            _context = context;
+            _repository = repository;
             _mapper = mapper;
         }
 
         [HttpGet("")]
         public async Task<IActionResult> Index()
         {
-              return _context.Persons != null ? 
-                          View(await _context.Persons.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Persons'  is null.");
+            return View(await _repository.List());
         }
 
         [HttpGet("detalhes")]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.Persons == null)
-            {
-                return NotFound();
-            }
-
-            var person = await _context.Persons
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var person = await _repository.GetById(id);
             if (person == null)
             {
                 return NotFound();
@@ -77,22 +70,16 @@ namespace PetShop.Controllers
                     person.Photo = viewModel.PhotoFile.FileName;
                 }
 
-                _context.Add(person);
-                await _context.SaveChangesAsync();
+                await _repository.Create(person);
                 return RedirectToAction(nameof(Index));
             }
             return View(viewModel);
         }
 
         [HttpGet("editar")]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || _context.Persons == null)
-            {
-                return NotFound();
-            }
-
-            var person = await _context.Persons.FindAsync(id);
+            var person = await _repository.GetById(id);
             if (person == null)
             {
                 return NotFound();
@@ -102,46 +89,21 @@ namespace PetShop.Controllers
 
         [HttpPost("editar")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type")] PersonViewModel person)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type")] PersonViewModel viewModel)
         {
-            if (id != person.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(person);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PersonExists(person.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                var person = _mapper.Map<Person>(viewModel);
+                await _repository.Update(person);                
                 return RedirectToAction(nameof(Index));
             }
-            return View(person);
+            return View(viewModel);
         }
 
         [HttpGet("excluir")]
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null || _context.Persons == null)
-            {
-                return NotFound();
-            }
-
-            var person = await _context.Persons
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var person = await _repository.GetById(id);
             if (person == null)
             {
                 return NotFound();
@@ -154,18 +116,12 @@ namespace PetShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Persons == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Persons'  is null.");
-            }
-            var person = await _context.Persons.FindAsync(id);
+            var person = await _repository.GetById(id);
             if (person != null)
             {
                 await ImageUtil.Delete($"wwwroot/imagens/{person.Photo}");
-                _context.Persons.Remove(person);
+                await _repository.Delete(person);
             }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

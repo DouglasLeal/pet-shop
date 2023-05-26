@@ -17,13 +17,11 @@ namespace PetShop.Controllers
     [Route("animais")]
     public class AnimalsController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IAnimalRepository _repository;
 
-        public AnimalsController(IAnimalRepository repository, ApplicationDbContext context, IMapper mapper)
+        public AnimalsController(IAnimalRepository repository, IMapper mapper)
         {
-            _context = context;
             _mapper = mapper;
             _repository = repository;
         }

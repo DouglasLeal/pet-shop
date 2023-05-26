@@ -20,6 +20,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
 builder.Services.AddTransient<IAnimalRepository, AnimalRepository>();
+builder.Services.AddTransient<IPersonRepository, PersonRepository>();
 
 var app = builder.Build();
 
