@@ -92,11 +92,6 @@ namespace PetShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,CostPrice,SalePrice,Description,Type")] Product product)
         {
-            if (id != product.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 await _repository.Update(product);

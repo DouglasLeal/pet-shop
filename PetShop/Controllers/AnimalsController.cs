@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PetShop.Data;
+using PetShop.Interfaces;
 using PetShop.Models;
 using PetShop.Utils;
 using PetShop.ViewModels;
@@ -18,31 +19,26 @@ namespace PetShop.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IAnimalRepository _repository;
 
-        public AnimalsController(ApplicationDbContext context, IMapper mapper)
+        public AnimalsController(IAnimalRepository repository, ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
+            _repository = repository;
         }
 
         [HttpGet("")]      
         public async Task<IActionResult> Index()
         {
-              return _context.Animals != null ? 
-                          View(await _context.Animals.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Animals'  is null.");
+            return View(await _repository.List());
         }
 
         [HttpGet("detalhes")]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.Animals == null)
-            {
-                return NotFound();
-            }
+            var animal = await _repository.GetById(id);
 
-            var animal = await _context.Animals
-                .FirstOrDefaultAsync(m => m.Id == id);
             if (animal == null)
             {
                 return NotFound();
@@ -75,24 +71,18 @@ namespace PetShop.Controllers
                     }
 
                     animal.Photo = viewModel.PhotoFile.FileName;
-                }                
+                }
 
-                _context.Add(animal);
-                await _context.SaveChangesAsync();
+                await _repository.Create(animal);
                 return RedirectToAction(nameof(Index));
             }
             return View(viewModel);
         }
 
         [HttpGet("editar")]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || _context.Animals == null)
-            {
-                return NotFound();
-            }
-
-            var animal = await _context.Animals.FindAsync(id);
+            var animal = await _repository.GetById(id);
             if (animal == null)
             {
                 return NotFound();
@@ -104,44 +94,18 @@ namespace PetShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Color,Observation,Type")] Animal animal)
         {
-            if (id != animal.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(animal);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AnimalExists(animal.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _repository.Update(animal);                                
                 return RedirectToAction(nameof(Index));
             }
             return View(animal);
         }
 
         [HttpGet("excluir")]
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null || _context.Animals == null)
-            {
-                return NotFound();
-            }
-
-            var animal = await _context.Animals
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var animal = await _repository.GetById(id);
             if (animal == null)
             {
                 return NotFound();
@@ -154,24 +118,13 @@ namespace PetShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Animals == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Animals'  is null.");
-            }
-            var animal = await _context.Animals.FindAsync(id);
+            var animal = await _repository.GetById(id);
             if (animal != null)
             {
                 await ImageUtil.Delete($"wwwroot/imagens/{animal.Photo}");
-                _context.Animals.Remove(animal);
+                await _repository.Delete(animal);
             }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool AnimalExists(int id)
-        {
-          return (_context.Animals?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
