@@ -14,7 +14,5 @@ namespace PetShop.Data
             : base(options)
         {
         }
-
-        public DbSet<PetShop.Models.Product> Product { get; set; } = default!;
     }
 }
