@@ -124,10 +124,5 @@ namespace PetShop.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
-
-        private bool PersonExists(int id)
-        {
-          return (_context.Persons?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
     }
 }
