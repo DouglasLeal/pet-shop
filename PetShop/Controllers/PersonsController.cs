@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PetShop.Data;
+using PetShop.Enum;
 using PetShop.Interfaces;
 using PetShop.Models;
 using PetShop.Utils;
@@ -30,6 +31,18 @@ namespace PetShop.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _repository.List());
+        }
+
+        [HttpGet("clientes")]
+        public async Task<IActionResult> Clientes()
+        {
+            return View("Index", await _repository.ListByType(PersonType.Customer));
+        }
+
+        [HttpGet("funcionarios")]
+        public async Task<IActionResult> Funcionarios()
+        {
+            return View("Index", await _repository.ListByType(PersonType.Employee));
         }
 
         [HttpGet("detalhes")]

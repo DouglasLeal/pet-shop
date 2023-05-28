@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PetShop.Data;
+using PetShop.Enum;
 using PetShop.Interfaces;
 using PetShop.Models;
 
@@ -24,6 +25,11 @@ namespace PetShop.Repositories
         public async Task<IList<Person>> List()
         {
             return await _context.Persons.OrderBy(p => p.Name).ToListAsync();
+        }
+
+        public async Task<IList<Person>> ListByType(PersonType type)
+        {
+            return await _context.Persons.Where(p => p.Type == type).OrderBy(p => p.Name).ToListAsync();
         }
 
         public async Task<Person?> GetById(int id)

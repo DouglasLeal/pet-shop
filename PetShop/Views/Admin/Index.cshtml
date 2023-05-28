@@ -1,16 +1,18 @@
-﻿@{
+﻿@addTagHelper **, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
     ViewData["Title"] = "Admin";
     Layout = "~/Views/Shared/_LayoutAdm.cshtml";
 }
 
-<div class="row g-3">
+<section class="row g-3 admin-index">
     <div class="col-12 col-lg-6">
-        <a class="btn btn-success">Clientes</a>
+        <a asp-controller="Persons" asp-action="Clientes" class="btn btn-success">Clientes</a>
     </div>
     <div class="col-12 col-lg-6">
         <a class="btn btn-warning">Produtos</a>
     </div>
     <div class="col-12 col-lg-6">
-        <a class="btn btn-info">Funcionários</a>
+        <a asp-controller="Persons" asp-action="Funcionarios" class="btn btn-info">Funcionários</a>
     </div>   
-</div>
+</section>
