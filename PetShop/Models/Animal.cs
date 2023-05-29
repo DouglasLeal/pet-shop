@@ -29,5 +29,12 @@ namespace PetShop.Models
 
         [DisplayName("Foto")]
         public string? Photo { get; set; }
+
+        [DisplayName("Dono")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        public int PersonId { get; set; }
+
+        [DisplayName("Dono")]
+        public Person? Person { get; set; }
     }
 }
