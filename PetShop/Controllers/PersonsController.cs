@@ -100,16 +100,33 @@ namespace PetShop.Controllers
             {
                 return NotFound();
             }
-            return View(person);
+            var viewModel = _mapper.Map<PersonViewModel>(person);
+            return View(viewModel);
         }
 
         [HttpPost("editar")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type")] PersonViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,PhotoFile")] PersonViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                var person = _mapper.Map<Person>(viewModel);
+                var person = await _repository.GetById(id);
+                _mapper.Map(viewModel, person);
+
+                if (viewModel.PhotoFile != null)
+                {
+                    var path = "";
+                    if (person.Photo != null) 
+                    {
+                         Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/imagens/", person.Photo);
+                        await ImageUtil.Delete(person.Photo);
+                    }                    
+                    path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/imagens/", viewModel.PhotoFile.FileName);
+                    await ImageUtil.Upload(viewModel.PhotoFile, path);
+                    person.Photo = viewModel.PhotoFile.FileName;
+                }
+                
+
                 await _repository.Update(person);                
                 return RedirectToAction(nameof(Index));
             }
