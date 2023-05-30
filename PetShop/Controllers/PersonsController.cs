@@ -19,12 +19,14 @@ namespace PetShop.Controllers
     public class PersonsController : Controller
     {
         private readonly IPersonRepository _repository;
+        private readonly IAnimalRepository _animalRepository;
         private readonly IMapper _mapper;
 
-        public PersonsController(IPersonRepository repository, IMapper mapper)
+        public PersonsController(IPersonRepository repository, IMapper mapper, IAnimalRepository animalRepository)
         {
             _repository = repository;
             _mapper = mapper;
+            _animalRepository = animalRepository;
         }
 
         [HttpGet("")]
@@ -53,6 +55,7 @@ namespace PetShop.Controllers
             {
                 return NotFound();
             }
+            ViewData["animals"] = await _animalRepository.ListByOwner(id);
 
             return View(person);
         }

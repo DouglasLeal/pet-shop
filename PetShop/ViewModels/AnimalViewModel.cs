@@ -1,6 +1,7 @@
 ﻿using PetShop.Enum;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using PetShop.Models;
 
 namespace PetShop.ViewModels
 {
@@ -32,5 +33,12 @@ namespace PetShop.ViewModels
 
         [DisplayName("Foto")]
         public IFormFile? PhotoFile { get; set; }
+
+        [DisplayName("Dono")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        public int PersonId { get; set; }
+
+        [DisplayName("Dono")]
+        public Person? Person { get; set; }
     }
 }

@@ -46,14 +46,15 @@ namespace PetShop.Controllers
         }
 
         [HttpGet("novo")]
-        public IActionResult Create()
+        public IActionResult Create(int id)
         {
+            ViewData["id"] = id;
             return View();
         }
 
         [HttpPost("novo")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Color,Observation,Type,PhotoFile")] AnimalViewModel viewModel)
+        public async Task<IActionResult> Create([Bind("Id,Name,Color,Observation,Type,PhotoFile,PersonId")] AnimalViewModel viewModel)
         {
             if (ModelState.IsValid)
             {

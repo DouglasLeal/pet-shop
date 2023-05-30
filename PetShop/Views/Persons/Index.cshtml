@@ -19,7 +19,7 @@
             <div class="col-md-8">
               <div class="card-body">
                 <h5 class="card-title">@item.Name</h5>
-                
+                    <a asp-controller="Animals" asp-action="Create" asp-route-id="@item.Id">Novo pet</a>
                 <div>
                     <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |

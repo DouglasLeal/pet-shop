@@ -6,6 +6,7 @@ namespace PetShop.Interfaces
     {
         Task Create(Animal animal);
         Task<IList<Animal>> List();
+        Task<IList<Animal>> ListByOwner(int id);
         Task<Animal?> GetById(int id);
         Task Update(Animal animal);
         Task Delete(Animal animal);

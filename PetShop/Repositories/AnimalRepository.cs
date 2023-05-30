@@ -26,6 +26,11 @@ namespace PetShop.Repositories
             return await _context.Animals.OrderBy(a => a.Name).ToListAsync();
         }
 
+        public async Task<IList<Animal>> ListByOwner(int id)
+        {
+            return await _context.Animals.Where(a => a.PersonId == id).OrderBy(a => a.Name).ToListAsync();
+        }
+
         public async Task<Animal?> GetById(int id)
         {
             return await _context.Animals.FirstOrDefaultAsync(a => id == a.Id);

@@ -2,6 +2,7 @@
 using PetShop.Enum;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PetShop.Models
 {

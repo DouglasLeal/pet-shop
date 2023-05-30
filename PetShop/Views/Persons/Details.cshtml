@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
+    IList<Animal> animals = ViewData["animals"] as IList<Animal>;
 }
 
 <h1>Detalhes da pessoa</h1>
@@ -27,6 +28,19 @@
         <dd class="col-sm-10">
             <img src="~/imagens/@Model.Photo" width="300px" />
         </dd>
+        
+        <dt class="col-sm-2">
+            Animais
+        </dt>
+        <dd class="col-sm-10">
+            <ul>
+                @foreach (var animal in animals)
+                {
+                    <li>@animal.Name</li>
+                }
+            </ul>
+        </dd>        
+        
     </dl>
 </div>
 <div>
